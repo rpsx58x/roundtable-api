@@ -1,0 +1,14 @@
+# Don't ship these to Railway
+android/
+ios/
+*.apk
+*.zip
+*.tar.gz
+convene.db
+roundtable.db
+dist/
+node_modules/
+.env
+.env.native
+scripts/
+MOBILE_BUILD_GUIDE.md

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+*.db
+*.db-journal
+convene.db
+roundtable.db
+.env
+android/
+ios/
+*.apk
+*.zip
+*.tar.gz
+jdk17/
+jdk21/
+android-sdk/
