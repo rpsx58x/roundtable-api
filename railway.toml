@@ -11,4 +11,3 @@ restartPolicyMaxRetries = 3
 
 [environments.production.variables]
 NODE_ENV = "production"
-DATABASE_PATH = "/app/data/roundtable.db"
