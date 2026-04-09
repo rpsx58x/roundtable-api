@@ -1,0 +1,123 @@
+name: iOS — Build Archive & Upload to TestFlight
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:           # allows manual trigger from GitHub Actions UI
+    inputs:
+      upload_testflight:
+        description: 'Upload to TestFlight after building?'
+        required: true
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+jobs:
+  build-ios:
+    name: Build iOS Archive
+    runs-on: macos-latest       # Apple Silicon runner (M-series)
+    timeout-minutes: 45
+
+    steps:
+      # ── Source ──────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node.js ─────────────────────────────────────────────────────────────
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci --legacy-peer-deps
+
+      # ── Build web assets with live Railway API URL ───────────────────────────
+      - name: Build web assets (native mode)
+        env:
+          VITE_API_BASE_URL: https://responsible-spontaneity-production.up.railway.app
+        run: npm run build
+
+      # ── Sync Capacitor to iOS ────────────────────────────────────────────────
+      - name: Sync Capacitor → iOS
+        run: npx cap sync ios
+
+      # ── Ruby / Fastlane ──────────────────────────────────────────────────────
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios/App
+
+      # ── CocoaPods ────────────────────────────────────────────────────────────
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/App/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/App/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods
+        working-directory: ios/App
+        run: pod install --repo-update
+
+      # ── Code signing via App Store Connect API ───────────────────────────────
+      - name: Install Apple signing certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERT_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          echo -n "$BUILD_CERTIFICATE_BASE64"     | base64 --decode -o $CERT_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          security import $CERT_PATH \
+            -P "$P12_PASSWORD" \
+            -A -t cert -f pkcs12 \
+            -k $KEYCHAIN_PATH
+
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      # ── Build with Fastlane ──────────────────────────────────────────────────
+      - name: Build iOS archive (Fastlane)
+        working-directory: ios/App
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_CONTENT: ${{ secrets.APPLE_API_KEY_CONTENT }}
+        run: bundle exec fastlane build
+
+      # ── Upload to TestFlight ──────────────────────────────────────────────────
+      - name: Upload to TestFlight
+        if: github.ref == 'refs/heads/main' && (github.event.inputs.upload_testflight != 'false')
+        working-directory: ios/App
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_CONTENT: ${{ secrets.APPLE_API_KEY_CONTENT }}
+        run: bundle exec fastlane testflight
+
+      # ── Save IPA artifact ─────────────────────────────────────────────────────
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoundTable-iOS-${{ github.sha }}
+          path: ios/App/build/RoundTable.ipa
+          retention-days: 30
+          if-no-files-found: warn

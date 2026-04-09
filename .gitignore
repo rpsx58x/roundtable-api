@@ -13,3 +13,8 @@ ios/
 jdk17/
 jdk21/
 android-sdk/
+
+# Signing keys — never commit
+android/app/roundtable-release.keystore
+android/keystore.properties
+*.b64.txt
