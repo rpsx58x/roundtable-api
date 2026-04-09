@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RoundTable brand colors -->
+    <color name="colorPrimary">#C99A2E</color>       <!-- Gold -->
+    <color name="colorPrimaryDark">#0E0F18</color>   <!-- Dark bg (status bar) -->
+    <color name="colorAccent">#C99A2E</color>
+    <color name="colorBackground">#0E0F18</color>
+</resources>

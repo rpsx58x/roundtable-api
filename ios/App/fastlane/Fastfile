@@ -1,0 +1,88 @@
+default_platform(:ios)
+
+# ── App Store Connect API Key ────────────────────────────────────────────────
+# Loaded from GitHub Secrets — no Apple ID / password needed
+def api_key
+  app_store_connect_api_key(
+    key_id:        ENV["APPLE_API_KEY_ID"],
+    issuer_id:     ENV["APPLE_API_ISSUER_ID"],
+    key_content:   ENV["APPLE_API_KEY_CONTENT"],   # full .p8 content (not path)
+    is_key_content_base64: true,
+  )
+end
+
+platform :ios do
+  # ── Build + Archive ────────────────────────────────────────────────────────
+  desc "Build a release archive ready for App Store Connect"
+  lane :build do
+    setup_ci if ENV["CI"]
+
+    # Automatic code signing via App Store Connect API
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path:                  "App.xcodeproj",
+      team_id:               ENV["APPLE_TEAM_ID"],
+      bundle_identifier:     "com.roundtable.app",
+    )
+
+    build_app(
+      workspace:        "App.xcworkspace",
+      scheme:           "App",
+      configuration:    "Release",
+      export_method:    "app-store",
+      output_directory: "./build",
+      output_name:      "RoundTable",
+      include_bitcode:  false,
+      export_options: {
+        provisioningProfiles: {
+          "com.roundtable.app" => "RoundTable AppStore"
+        }
+      },
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}"
+    )
+  end
+
+  # ── Upload to TestFlight ───────────────────────────────────────────────────
+  desc "Upload a built IPA to TestFlight"
+  lane :testflight do
+    key = api_key
+    upload_to_testflight(
+      api_key:                  key,
+      ipa:                      "./build/RoundTable.ipa",
+      app_identifier:           "com.roundtable.app",
+      skip_waiting_for_build_processing: true,
+      changelog:                "New RoundTable build from CI"
+    )
+  end
+
+  # ── Build + upload in one shot ─────────────────────────────────────────────
+  desc "Build archive and upload directly to TestFlight"
+  lane :release do
+    key = api_key
+    setup_ci if ENV["CI"]
+
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path:                  "App.xcodeproj",
+      team_id:               ENV["APPLE_TEAM_ID"],
+      bundle_identifier:     "com.roundtable.app",
+    )
+
+    build_app(
+      workspace:     "App.xcworkspace",
+      scheme:        "App",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name:   "RoundTable",
+      include_bitcode: false,
+    )
+
+    upload_to_testflight(
+      api_key:          key,
+      ipa:              "./build/RoundTable.ipa",
+      app_identifier:   "com.roundtable.app",
+      skip_waiting_for_build_processing: true,
+    )
+  end
+end

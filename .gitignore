@@ -1,20 +1,42 @@
+# Dependencies
 node_modules/
+
+# Build outputs (local only)
 dist/
+
+# Local databases
 *.db
 *.db-journal
-convene.db
-roundtable.db
+
+# Env files
 .env
-android/
-ios/
-*.apk
-*.zip
-*.tar.gz
+
+# Mobile build artifacts (too large for git)
+android/app/build/
+android/.gradle/
+android/capacitor-cordova-android-plugins/
+android/build/
+ios/App/Pods/
+ios/App/build/
+ios/App/App.xcarchive/
+*.xcarchive/
+*.ipa
+
+# Signing keys — NEVER commit
+android/app/roundtable-release.keystore
+android/roundtable-release.keystore
+android/keystore.properties
+*.b64.txt
+*.p12
+*.mobileprovision
+
+# Toolchains (downloaded by CI script)
 jdk17/
 jdk21/
 android-sdk/
 
-# Signing keys — never commit
-android/app/roundtable-release.keystore
-android/keystore.properties
-*.b64.txt
+# Generated artifacts
+*.apk
+*.aab
+*.zip
+*.tar.gz

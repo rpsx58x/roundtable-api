@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- ── App identity ──────────────────────────────────────────────── -->
+    <key>CFBundleName</key>
+    <string>RoundTable</string>
+    <key>CFBundleDisplayName</key>
+    <string>RoundTable</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.roundtable.app</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <!-- ── Icon & Launch ──────────────────────────────────────────────── -->
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+
+    <!-- ── Orientation (portrait only to start) ──────────────────────── -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- ── Status bar ────────────────────────────────────────────────── -->
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleLightContent</string>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>
+
+    <!-- ── Privacy usage descriptions (required for App Store review) ── -->
+
+    <!-- Location: needed to show professionals nearby -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>RoundTable uses your location to show professionals and events near you.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>RoundTable uses your location to show professionals and events near you, and to notify you when someone you know is in town.</string>
+
+    <!-- Camera: for uploading reservation screenshots and tickets -->
+    <key>NSCameraUsageDescription</key>
+    <string>RoundTable uses your camera to upload reservation confirmations and event tickets.</string>
+
+    <!-- Photo library: same purpose -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>RoundTable accesses your photos to upload reservation confirmations and event tickets.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>RoundTable may save event photos to your photo library.</string>
+
+    <!-- Contacts: optionally find RoundTable members you already know -->
+    <key>NSContactsUsageDescription</key>
+    <string>RoundTable can check your contacts to find people you already know who are also on RoundTable.</string>
+
+    <!-- Push notifications are handled at runtime by @capacitor/push-notifications -->
+
+    <!-- ── Deep links & URL schemes ───────────────────────────────────── -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <!-- Custom URL scheme: roundtable://open/... -->
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.roundtable.app</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>roundtable</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- Associated Domains enables Universal Links (https://roundtable.app/...) -->
+    <!-- Add applinks:roundtable.app in Xcode → Signing & Capabilities → Associated Domains -->
+
+    <!-- ── App Transport Security ─────────────────────────────────────── -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <!-- All API calls must use HTTPS in production -->
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <!-- Allow plain HTTP only for local development on LAN -->
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>localhost</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <false/>
+            </dict>
+        </dict>
+    </dict>
+
+    <!-- ── Capacitor / WKWebView config ──────────────────────────────── -->
+    <key>WKAppBoundDomains</key>
+    <array>
+        <string>roundtable.app</string>
+        <string>api.roundtable.app</string>
+    </array>
+
+    <!-- ── Background modes ───────────────────────────────────────────── -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>   <!-- Push notifications -->
+        <string>fetch</string>                 <!-- Background refresh -->
+    </array>
+
+    <!-- ── Required device capabilities ──────────────────────────────── -->
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>armv7</string>
+    </array>
+
+    <!-- ── iPad full-screen support ─────────────────────────────────── -->
+    <key>UIRequiresFullScreen</key>
+    <false/>
+
+</dict>
+</plist>
