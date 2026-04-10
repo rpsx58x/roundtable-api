@@ -1,4 +1,4 @@
-package com.roundtable.app;
+package com.schilltech.roundtable;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -9,7 +9,7 @@
     <key>CFBundleDisplayName</key>
     <string>RoundTable</string>
     <key>CFBundleIdentifier</key>
-    <string>com.roundtable.app</string>
+    <string>com.schilltech.roundtable</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
@@ -80,7 +80,7 @@
         <!-- Custom URL scheme: roundtable://open/... -->
         <dict>
             <key>CFBundleURLName</key>
-            <string>com.roundtable.app</string>
+            <string>com.schilltech.roundtable</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>roundtable</string>

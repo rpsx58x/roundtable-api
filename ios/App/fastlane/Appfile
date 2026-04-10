@@ -1,4 +1,4 @@
-app_identifier("com.roundtable.app")
+app_identifier("com.schilltech.roundtable")
 apple_dev_portal_id(ENV["APPLE_ID"])
 itc_team_id(ENV["APPLE_TEAM_ID"])
 team_id(ENV["APPLE_TEAM_ID"])

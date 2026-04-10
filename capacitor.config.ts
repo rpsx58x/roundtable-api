@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.roundtable.app",
+  appId: "com.schilltech.roundtable",
   appName: "RoundTable",
   webDir: "dist/public",
 

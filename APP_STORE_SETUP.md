@@ -64,7 +64,7 @@ Value: (paste the entire JSON content from Step 4)
 
 ### Step 2 — Register the App ID
 1. **developer.apple.com → Certificates, IDs & Profiles → Identifiers**
-2. Register App ID: `com.roundtable.app`
+2. Register App ID: `com.schilltech.roundtable`
 3. Enable capabilities: Push Notifications, Associated Domains
 
 ### Step 3 — Create the app in App Store Connect
@@ -72,7 +72,7 @@ Value: (paste the entire JSON content from Step 4)
 2. New App:
    - Platform: iOS
    - Name: `RoundTable`
-   - Bundle ID: `com.roundtable.app`
+   - Bundle ID: `com.schilltech.roundtable`
    - SKU: `roundtable-ios-001`
 3. **Agree to all Paid Applications Agreement** (required even for free apps)
 
@@ -101,7 +101,7 @@ Then export the certificate:
 Export the provisioning profile:
 1. **developer.apple.com → Profiles → +**
 2. Type: **App Store Distribution**
-3. App ID: `com.roundtable.app`
+3. App ID: `com.schilltech.roundtable`
 4. Certificate: select the one you just created
 5. Profile name: `RoundTable AppStore`
 6. Download: `RoundTable_AppStore.mobileprovision`
